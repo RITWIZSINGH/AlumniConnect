@@ -1,6 +1,7 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
-
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unused_import
+import 'package:alumni_connect/screens/alumni_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -18,13 +19,11 @@ class _SplashscreenState extends State<Splashscreen>
   void initState() {
     super.initState();
 
-    // Initialize AnimationController
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 3),
-    )..repeat(reverse: true); // Repeats zoom-in and zoom-out
+      duration: Duration(seconds: 2),
+    )..repeat(reverse: true);
 
-    // Define a tween for scaling (from 1.0 to 1.5)
     _animation = Tween<double>(begin: 1.0, end: 1.5).animate(
       CurvedAnimation(
         parent: _controller,
@@ -32,57 +31,54 @@ class _SplashscreenState extends State<Splashscreen>
       ),
     );
 
-    // Navigate to MainScreen after 2 seconds
     Future.delayed(Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
+        MaterialPageRoute(builder: (context) => AlumniScreen()),
       );
     });
   }
 
   @override
   void dispose() {
-    _controller.dispose(); // Clean up the controller
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ScaleTransition(
-          scale: _animation,
-          child: Column(
-            children: [
-              CircleAvatar(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "N I T H",
+            style: TextStyle(
+                color: Color.fromARGB(255, 68, 103, 137),
+                fontWeight: FontWeight.bold,
+                fontSize: 20),
+          ).animate().fadeIn(duration: Duration(milliseconds: 3000)),
+          SizedBox(
+            height: 40,
+          ),
+          Center(
+            child: ScaleTransition(
+              scale: _animation,
+              child: CircleAvatar(
                 backgroundImage: AssetImage('assets/alumniconnect.png'),
                 radius: 50,
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class MainScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Main Screen'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: List.generate(
-            50, // Add 50 items for scrolling demo
-            (index) => ListTile(
-              title: Text('Item $index'),
             ),
           ),
-        ),
+          SizedBox(height: 40,),
+          Text(
+            " AlumniCONNECT",
+            style: TextStyle(
+                color: Color.fromARGB(255, 68, 103, 137),
+                fontWeight: FontWeight.bold,
+                fontSize: 25),
+          ).animate().fadeIn(duration: Duration(milliseconds: 3000)),
+        ],
       ),
     );
   }
