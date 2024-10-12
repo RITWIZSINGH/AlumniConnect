@@ -1,21 +1,42 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_app_bar.dart';
+import 'package:alumni_connect/widgets/custom_card.dart';
 
-class AlumniScreen extends StatelessWidget {
+class AlumniScreen extends StatefulWidget {
+  @override
+  _AlumniScreenState createState() => _AlumniScreenState();
+}
+
+class _AlumniScreenState extends State<AlumniScreen> {
+  int? selectedCardIndex;
+
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          CustomAppBar(), // Use the modified SliverAppBar
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return ListTile(
-                  title: Text('Alumni $index'),
-                );
-              },
-              childCount: 30, // Number of items in the list
+          CustomAppBar(),
+          SliverPadding(
+            padding: EdgeInsets.symmetric(
+                horizontal: screenWidth / 24, vertical: screenHeight / 48),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return AlumniCard(
+                    index: index,
+                    isSelected: selectedCardIndex == index,
+                    onTap: () {
+                      setState(() {
+                        selectedCardIndex = index;
+                      });
+                    },
+                  );
+                },
+                childCount: 10, // Number of cards
+              ),
             ),
           ),
         ],

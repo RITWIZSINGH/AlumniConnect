@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print, override_on_non_overriding_member
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget {
@@ -6,16 +6,17 @@ class CustomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    print(screenHeight);
-    print(screenWidth);
+
     return SliverAppBar(
-      pinned: false, // Keeps the app bar pinned at the top when fully collapsed
-      floating:
-          false, // If true, the app bar will float over the content when scrolling up
-      snap: false, // If true, the app bar will "snap" into view when scrolling
-      expandedHeight: screenHeight / 8.5, // Height of the app bar when expanded
+      shadowColor: Colors.black54,
+      backgroundColor: Colors.blue.shade100,
+      elevation: screenHeight / 37.9, // Dynamic elevation
+      pinned: false,
+      floating: false,
+      expandedHeight: screenHeight / 9.5,
       flexibleSpace: FlexibleSpaceBar(
-        titlePadding: EdgeInsets.all(8.0),
+        collapseMode: CollapseMode.parallax,
+        titlePadding: EdgeInsets.fromLTRB(8, 8, 8, screenHeight / 400),
         title: Row(
           children: [
             CircleAvatar(),
@@ -24,8 +25,9 @@ class CustomAppBar extends StatelessWidget {
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: screenWidth / 32),
+                  contentPadding: EdgeInsets.symmetric(
+                      horizontal: screenWidth / 64,
+                      vertical: screenHeight / 400),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -41,6 +43,16 @@ class CustomAppBar extends StatelessWidget {
           ],
         ),
       ),
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(4),
+        child: Container(
+          color: Colors.blue.shade200, // Separator color
+          height: 4, // Height of the separation
+        ),
+      ),
     );
   }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
