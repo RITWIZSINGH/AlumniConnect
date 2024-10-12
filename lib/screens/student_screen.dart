@@ -5,14 +5,20 @@ class StudentsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
-      body: ListView.builder(
-        itemCount: 30,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text('Student $index'),
-          );
-        },
+      body: CustomScrollView(
+        slivers: [
+          CustomAppBar(), // Use the modified SliverAppBar
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return ListTile(
+                  title: Text('Student $index'),
+                );
+              },
+              childCount: 30, // Number of items in the list
+            ),
+          ),
+        ],
       ),
     );
   }
