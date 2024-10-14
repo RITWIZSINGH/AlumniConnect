@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import '../widgets/custom_app_bar.dart';
 import 'package:alumni_connect/widgets/custom_card.dart';
@@ -21,7 +23,7 @@ class _AlumniScreenState extends State<AlumniScreen> {
           CustomAppBar(),
           SliverPadding(
             padding: EdgeInsets.symmetric(
-                horizontal: screenWidth / 24, vertical: screenHeight / 48),
+                horizontal: screenWidth / 24, vertical: screenHeight / 24),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {

@@ -7,7 +7,8 @@ class AlumniCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  AlumniCard({required this.index, required this.isSelected, required this.onTap});
+  AlumniCard(
+      {required this.index, required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +16,14 @@ class AlumniCard extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenHeight / 48),
+      padding: EdgeInsets.symmetric(vertical: screenHeight / 34),
       child: GestureDetector(
         onTap: onTap,
         child: AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          transform: isSelected 
-              ? Matrix4.identity().scaled(1.1) // Corrected the scale transformation
+          transform: isSelected
+              ? Matrix4.identity()
+                  .scaled(1.1) // Corrected the scale transformation
               : Matrix4.identity().scaled(0.9),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
