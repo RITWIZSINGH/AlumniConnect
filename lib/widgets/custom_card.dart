@@ -1,5 +1,4 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors_in_immutables, prefer_const_constructors
-
 import 'package:flutter/material.dart';
 
 class AlumniCard extends StatelessWidget {
@@ -10,9 +9,10 @@ class AlumniCard extends StatelessWidget {
   final int batch;
   final String profilePicUrl;
   final String profileLink;
-  final Function onTap;
+  final VoidCallback onTap;
 
-  AlumniCard({
+  const AlumniCard({
+    Key? key,
     required this.index,
     required this.isSelected,
     required this.name,
@@ -21,30 +21,45 @@ class AlumniCard extends StatelessWidget {
     required this.profilePicUrl,
     required this.profileLink,
     required this.onTap,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onTap(),
-      child: Card(
-        color: isSelected ? Colors.blue[100] : Colors.white,
+    return Card(
+      elevation: isSelected ? 8 : 2,
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: InkWell(
+        onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16),
           child: Row(
             children: [
               CircleAvatar(
+                radius: 30,
                 backgroundImage: NetworkImage(profilePicUrl),
-                radius: 30.0,
+                onBackgroundImageError: (exception, stackTrace) {
+                  // If the image fails to load, use a placeholder
+                  print('Failed to load image: $profilePicUrl');
+                },
+                child: Image.network(
+                  profilePicUrl,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.person, size: 40);
+                  },
+                ),
               ),
               SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text(company),
-                  Text('Batch: $batch'),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 4),
+                    Text(company, style: TextStyle(fontSize: 14)),
+                    SizedBox(height: 4),
+                    Text('Batch of $batch', style: TextStyle(fontSize: 14)),
+                  ],
+                ),
               ),
             ],
           ),

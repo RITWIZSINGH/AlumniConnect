@@ -11,6 +11,7 @@ class NetworkHelper {
 
     if (response.statusCode == 200) {
       String data = response.body;
+      print(data);
       return jsonDecode(data);
     } else {
       print(response.statusCode);
@@ -18,15 +19,16 @@ class NetworkHelper {
     }
   }
 
-  Future postData(String body) async {
+  Future postData(List<int> body) async {
     http.Response response = await http.post(
       Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
-      body: body,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"indexes":body}),
     );
 
     if (response.statusCode == 200) {
       String data = response.body;
+      print('This is the postdata response $data');
       return jsonDecode(data);
     } else {
       print(response.statusCode);
