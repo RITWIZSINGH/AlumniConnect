@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, avoid_print, unnecessary_type_check, library_private_types_in_public_api, use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import '../widgets/custom_app_bar.dart';
 import 'package:alumni_connect/services/alumni_data.dart';
@@ -65,6 +67,7 @@ class _AlumniScreenState extends State<AlumniScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(),
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [

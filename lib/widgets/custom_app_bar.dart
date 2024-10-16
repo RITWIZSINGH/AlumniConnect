@@ -19,7 +19,11 @@ class CustomAppBar extends StatelessWidget {
         titlePadding: EdgeInsets.fromLTRB(8, 8, 8, screenHeight / 400),
         title: Row(
           children: [
-            CircleAvatar(),
+            GestureDetector(
+              onTap: (){
+                Scaffold.of(context).openDrawer();
+              },
+              child: CircleAvatar()),
             SizedBox(width: screenWidth / 29.5),
             Expanded(
               child: TextField(
