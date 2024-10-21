@@ -67,25 +67,53 @@ class _AlumniScreenState extends State<AlumniScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(),
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          CustomAppBar(),
-          SliverToBoxAdapter(
-            child: isLoading
-                ? Center(child: CircularProgressIndicator())
-                : Container(), // Empty container if not loading
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
+      appBar: CustomAppBar(),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text('Home'),
+              onTap: () {
+                // Handle navigation
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                // Handle navigation
+                Navigator.pop(context);
+              },
+            ),
+            // Add more ListTiles for additional menu items
+          ],
+        ),
+      ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              controller: _scrollController,
+              itemCount: alumniItems.length + (isFetchingMore ? 1 : 0),
+              itemBuilder: (context, index) {
                 if (index == alumniItems.length) {
-                  if (isFetchingMore) {
-                    return Center(child: CircularProgressIndicator());
-                  } else {
-                    return null; // Return null to stop building more items
-                  }
+                  return isFetchingMore
+                      ? Center(child: CircularProgressIndicator())
+                      : Container();
                 }
                 var alumni = alumniItems[index];
                 return AlumniCard(
@@ -103,11 +131,7 @@ class _AlumniScreenState extends State<AlumniScreen> {
                   },
                 );
               },
-              childCount: alumniItems.length + (isFetchingMore ? 1 : 0),
             ),
-          ),
-        ],
-      ),
     );
   }
 }

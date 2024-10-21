@@ -1,58 +1,51 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print, override_on_non_overriding_member
+import 'package:alumni_connect/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
-class CustomAppBar extends StatelessWidget {
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
-    return SliverAppBar(
-      shadowColor: Colors.black54,
-      backgroundColor: Colors.blue.shade100,
-      elevation: screenHeight / 37.9, // Dynamic elevation
-      pinned: false,
-      floating: false,
-      expandedHeight: screenHeight / 9.5,
-      flexibleSpace: FlexibleSpaceBar(
-        collapseMode: CollapseMode.parallax,
-        titlePadding: EdgeInsets.fromLTRB(8, 8, 8, screenHeight / 400),
-        title: Row(
-          children: [
-            GestureDetector(
-              onTap: (){
-                Scaffold.of(context).openDrawer();
-              },
-              child: CircleAvatar()),
-            SizedBox(width: screenWidth / 29.5),
-            Expanded(
+    return AppBar(
+      backgroundColor: Colors.blue.shade700,
+      elevation: 4,
+      title: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
+            },
+            child: CircleAvatar(
+              backgroundColor: Colors.blue.shade100,
+              child: Icon(Icons.person, color: Colors.blue.shade700),
+            ),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Container(
+              height: 36,
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  contentPadding: EdgeInsets.symmetric(
-                      horizontal: screenWidth / 64,
-                      vertical: screenHeight / 400),
+                  hintStyle: TextStyle(color: Colors.black),
+                  prefixIcon: Icon(Icons.search, color: Colors.black),
+                  filled: true,
+                  fillColor: Colors.blue.shade200,
+                  contentPadding: EdgeInsets.symmetric(vertical: 0),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide.none,
                   ),
                 ),
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.filter_list),
-              onPressed: () {
-                // Handle filter action
-              },
-            ),
-          ],
-        ),
-      ),
-      bottom: PreferredSize(
-        preferredSize: Size.fromHeight(4),
-        child: Container(
-          color: Colors.blue.shade200, // Separator color
-          height: 4, // Height of the separation
-        ),
+          ),
+          IconButton(
+            icon: Icon(Icons.filter_list, color: Colors.white),
+            onPressed: () {
+              // Handle filter action
+            },
+          ),
+        ],
       ),
     );
   }

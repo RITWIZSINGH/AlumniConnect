@@ -39,7 +39,7 @@ class AlumniCard extends StatelessWidget {
                 backgroundImage: NetworkImage(profilePicUrl),
                 onBackgroundImageError: (exception, stackTrace) {
                   // If the image fails to load, use a placeholder
-                  print('Failed to load image: $profilePicUrl');
+                  // print('Failed to load image: $profilePicUrl');
                 },
                 child: Image.network(
                   profilePicUrl,
