@@ -63,75 +63,49 @@ class _AlumniScreenState extends State<AlumniScreen> {
       });
     }
   }
-
-  @override
+@override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
+    return SafeArea(
+      child: Scaffold(
+        body: CustomScrollView(
+          controller: _scrollController,
+          slivers: <Widget>[
+            CustomAppBar(),
+            SliverToBoxAdapter(
+              child: isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : SizedBox.shrink(),
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  if (index == alumniItems.length) {
+                    return isFetchingMore
+                        ? Center(child: CircularProgressIndicator())
+                        : SizedBox.shrink();
+                  }
+                  var alumni = alumniItems[index];
+                  return AlumniCard(
+                    index: index,
+                    isSelected: selectedCardIndex == index,
+                    name: alumni['NAME'],
+                    company: alumni['COMPANY'],
+                    batch: alumni['BATCH'],
+                    profilePicUrl: alumni['PIC'],
+                    profileLink: alumni['PROFILE'],
+                    onTap: () {
+                      setState(() {
+                        selectedCardIndex = index;
+                      });
+                    },
+                  );
+                },
+                childCount: alumniItems.length + (isFetchingMore ? 1 : 0),
               ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
             ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
-              onTap: () {
-                // Handle navigation
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              onTap: () {
-                // Handle navigation
-                Navigator.pop(context);
-              },
-            ),
-            // Add more ListTiles for additional menu items
           ],
         ),
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              controller: _scrollController,
-              itemCount: alumniItems.length + (isFetchingMore ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == alumniItems.length) {
-                  return isFetchingMore
-                      ? Center(child: CircularProgressIndicator())
-                      : Container();
-                }
-                var alumni = alumniItems[index];
-                return AlumniCard(
-                  index: index,
-                  isSelected: selectedCardIndex == index,
-                  name: alumni['NAME'],
-                  company: alumni['COMPANY'],
-                  batch: alumni['BATCH'],
-                  profilePicUrl: alumni['PIC'],
-                  profileLink: alumni['PROFILE'],
-                  onTap: () {
-                    setState(() {
-                      selectedCardIndex = index;
-                    });
-                  },
-                );
-              },
-            ),
     );
   }
 }

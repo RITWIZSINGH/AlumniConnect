@@ -1,6 +1,7 @@
 
 // ignore_for_file: prefer_const_constructors
 
+import 'package:alumni_connect/screens/alumni_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:alumni_connect/screens/splashscreen.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Splashscreen()
+      home: AlumniScreen()
     );
   }
 }
