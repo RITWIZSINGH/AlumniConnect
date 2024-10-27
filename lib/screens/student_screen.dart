@@ -7,7 +7,7 @@ class StudentsScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          CustomAppBar(), // Use the modified SliverAppBar
+          // CustomAppBar(), // Use the modified SliverAppBar
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
