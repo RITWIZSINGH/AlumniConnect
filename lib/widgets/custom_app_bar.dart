@@ -1,5 +1,4 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print, override_on_non_overriding_member, prefer_const_constructors_in_immutables
-// custom_app_bar.dart
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print, unnecessary_type_check, library_private_types_in_public_api
 import 'package:flutter/material.dart';
 import 'package:alumni_connect/screens/profile_screen.dart';
 import 'package:alumni_connect/screens/login_screen.dart';
@@ -14,6 +13,8 @@ class CustomAppBar extends StatelessWidget {
     return SliverAppBar(
       backgroundColor: Colors.blue.shade700,
       floating: true,
+      elevation: 20,
+      shadowColor: Colors.black,
       snap: true,
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: EdgeInsetsDirectional.only(start: 16, bottom: 8),
@@ -28,9 +29,17 @@ class CustomAppBar extends StatelessWidget {
                   ),
                 );
               },
-              child: CircleAvatar(
-                backgroundColor: Colors.blue.shade100,
-                child: Icon(Icons.login, color: Colors.blue.shade700),
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                child: Text(
+                  'LOGIN',
+                  style: TextStyle(fontSize: 20, color: Colors.blue.shade700),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.blue.shade700),
+                ),
               ),
             ),
             SizedBox(width: 10),
@@ -38,29 +47,33 @@ class CustomAppBar extends StatelessWidget {
               child: Container(
                 height: 36,
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade200.withOpacity(0.8),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: TextField(
                   controller: searchController,
                   decoration: InputDecoration(
                     hintText: 'Search',
-                    hintStyle: TextStyle(color: Colors.black),
-                    prefixIcon: Icon(Icons.search, color: Colors.black),
+                    hintStyle: TextStyle(color: Colors.grey.shade600),
+                    prefixIcon: Icon(Icons.search, color: Colors.blue.shade700),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 5, horizontal: 8),
                   ),
                 ),
               ),
             ),
+            SizedBox(width: 10),
             CircleAvatar(
+              backgroundColor: Colors.white,
               child: IconButton(
-                icon: Icon(Icons.filter_list, color: Colors.black),
+                icon: Icon(Icons.filter_list, color: Colors.blue.shade700),
                 onPressed: () {
                   // Handle filter action
                 },
               ),
             ),
+            SizedBox(width: 10)
           ],
         ),
       ),

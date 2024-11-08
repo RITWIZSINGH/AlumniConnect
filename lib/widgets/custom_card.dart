@@ -27,7 +27,9 @@ class AlumniCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: isSelected ? 8 : 2,
+      // color: Colors.teal,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      shadowColor: Colors.teal,
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -38,13 +40,12 @@ class AlumniCard extends StatelessWidget {
                 radius: 30,
                 backgroundImage: NetworkImage(profilePicUrl),
                 onBackgroundImageError: (exception, stackTrace) {
-                  // If the image fails to load, use a placeholder
-                  // print('Failed to load image: $profilePicUrl');
+                  // Fallback for failed image loading
                 },
                 child: Image.network(
                   profilePicUrl,
                   errorBuilder: (context, error, stackTrace) {
-                    return Icon(Icons.person, size: 40);
+                    return Icon(Icons.person, size: 40, color: Colors.teal);
                   },
                 ),
               ),
@@ -53,11 +54,15 @@ class AlumniCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(name.toUpperCase(),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                     SizedBox(height: 4),
-                    Text(company, style: TextStyle(fontSize: 14)),
+                    Text(company,
+                        style: TextStyle(fontSize: 14, color: Colors.blueGrey)),
                     SizedBox(height: 4),
-                    Text('Batch of $batch', style: TextStyle(fontSize: 14)),
+                    Text('Batch of $batch',
+                        style: TextStyle(fontSize: 14, color: Colors.teal)),
                   ],
                 ),
               ),
