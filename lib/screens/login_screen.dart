@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, avoid_print, use_key_in_widget_constructors, library_private_types_in_public_api, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, avoid_print, use_key_in_widget_constructors, library_private_types_in_public_api, sort_child_properties_last, unused_field, unused_element, no_leading_underscores_for_local_identifiers, unused_local_variable
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -14,6 +15,17 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isSignUp = false;
+  User? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _auth.authStateChanges().listen((event) {
+      setState(() {
+        _user = event;
+      });
+    });
+  }
 
   Future<void> _signInWithEmailAndPassword() async {
     try {
@@ -45,26 +57,26 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return;
+  // Future<void> _signInWithGoogle() async {
+  //   try {
+  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+  //     if (googleUser == null) return;
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+  //     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+  //     final AuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
 
-      await _auth.signInWithCredential(credential);
-      Navigator.pushReplacementNamed(context, '/home');
-    } catch (e) {
-      print("Error signing in with Google: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to sign in with Google: $e")),
-      );
-    }
-  }
+  //     await _auth.signInWithCredential(credential);
+  //     Navigator.pushReplacementNamed(context, '/home');
+  //   } catch (e) {
+  //     print("Error signing in with Google: $e");
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Failed to sign in with Google: $e")),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +114,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _isSignUp ? _signUpWithEmailAndPassword : _signInWithEmailAndPassword,
+                onPressed: _isSignUp
+                    ? _signUpWithEmailAndPassword
+                    : _signInWithEmailAndPassword,
                 child: Text(_isSignUp ? "Sign Up" : "Login"),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.blue.shade700,
@@ -119,29 +133,48 @@ class _LoginScreenState extends State<LoginScreen> {
                   });
                 },
                 child: Text(
-                  _isSignUp ? "Already have an account? Login" : "Don't have an account? Sign Up",
+                  _isSignUp
+                      ? "Already have an account? Login"
+                      : "Don't have an account? Sign Up",
                   style: TextStyle(color: Colors.blue.shade700),
                 ),
               ),
               SizedBox(height: 20),
               Divider(),
               SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: _signInWithGoogle,
-                icon: Icon(Icons.login),
-                label: Text("Sign in with Google"),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.blue.shade700,
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
+              // ElevatedButton.icon(
+              //   onPressed: _signInWithEmailAndPassword,
+              //   icon: Icon(Icons.login),
+              //   label: Text("Sign in with Google"),
+              //   style: ElevatedButton.styleFrom(
+              //     foregroundColor: Colors.blue.shade700,
+              //     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(8),
+              //     ),
+              //   ),
+              // ),
+              _googleSignInButton(),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _googleSignInButton() {
+    return SignInButton(
+      Buttons.google,
+      onPressed: _handleGoogleSignIn,
+      text: "Sign Up with Google",
+    );
+  }
+
+  void _handleGoogleSignIn() {
+    try {
+      GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
+    } catch (e) {
+      print(e);
+    }
   }
 }

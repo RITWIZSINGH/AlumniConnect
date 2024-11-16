@@ -33,7 +33,10 @@ class CustomAppBar extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: Text(
                   'LOGIN',
-                  style: TextStyle(fontSize: 20, color: Colors.blue.shade700),
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white,

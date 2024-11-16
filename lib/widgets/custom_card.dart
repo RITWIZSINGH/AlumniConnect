@@ -61,8 +61,24 @@ class AlumniCard extends StatelessWidget {
                     Text(company,
                         style: TextStyle(fontSize: 14, color: Colors.blueGrey)),
                     SizedBox(height: 4),
-                    Text('Batch of $batch',
-                        style: TextStyle(fontSize: 14, color: Colors.teal)),
+                    //Batch Row start
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.badge,
+                          size: 22,
+                          color: Colors.teal.shade600,
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text('Batch of $batch',
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.teal.shade400)),
+                      ],
+                    ),
+                    //Batch Row ended
                   ],
                 ),
               ),
