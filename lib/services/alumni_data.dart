@@ -48,4 +48,44 @@ class AlumniData {
   }
 }
 
+   //Filtering Function for alumni's 
+  Future<Map<String, dynamic>> filterAlumniData({
+    List<String> field = const [],
+    List<String> branch = const [],
+    List<int> batch = const [],
+  }) async {
+    NetworkHelper networkHelper = NetworkHelper("http://localhost:3001/filter");
+    
+    // Prepare the filter criteria
+    Map<String, dynamic> filterBody = {
+      'field': field,
+      'branch': branch,
+      'batch': batch,
+    };
+
+    print('Sending filter request with criteria: ${jsonEncode(filterBody)}');
+
+    try {
+      // Send POST request with filter criteria
+      var response = await networkHelper.postFilterData(filterBody);
+
+      // Check if response contains items
+      if (response is Map && response.containsKey('items')) {
+        print('Received ${(response['items'] as List).length} filtered results');
+        return response;
+      } else {
+        print('Unexpected response format: $response');
+        return {
+          'items': [],
+          'error': 'Invalid response format'
+        };
+      }
+    } catch (e) {
+      print('Error filtering alumni data: $e');
+      return {
+        'items': [],
+        'error': e.toString()
+      };
+    }
+  }
 }
