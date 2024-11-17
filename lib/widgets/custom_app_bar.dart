@@ -1,12 +1,12 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print, unnecessary_type_check, library_private_types_in_public_api, sort_child_properties_last, unused_import, prefer_const_constructors_in_immutables
-import 'package:flutter/material.dart';
-import 'package:alumni_connect/screens/profile_screen.dart';
 import 'package:alumni_connect/screens/login_screen.dart';
+import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget {
   final TextEditingController searchController;
+  final VoidCallback onFilterTap;
 
-  CustomAppBar({required this.searchController});
+  CustomAppBar({required this.searchController, required this.onFilterTap});
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +34,10 @@ class CustomAppBar extends StatelessWidget {
                 child: Text(
                   'LOGIN',
                   style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold
+                  ),
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -71,9 +72,7 @@ class CustomAppBar extends StatelessWidget {
               backgroundColor: Colors.white,
               child: IconButton(
                 icon: Icon(Icons.filter_list, color: Colors.blue.shade700),
-                onPressed: () {
-                  // Handle filter action
-                },
+                onPressed: onFilterTap,
               ),
             ),
             SizedBox(width: 10)
