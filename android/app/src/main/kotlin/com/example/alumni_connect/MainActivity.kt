@@ -1,4 +1,4 @@
-package com.example.alumni_connect
+package com.example.alu
 
 import io.flutter.embedding.android.FlutterActivity
 

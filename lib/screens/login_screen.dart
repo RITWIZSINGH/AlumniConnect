@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, avoid_print, use_key_in_widget_constructors, library_private_types_in_public_api, sort_child_properties_last, unused_field, unused_element, no_leading_underscores_for_local_identifiers, unused_local_variable
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, avoid_print, use_key_in_widget_constructors, library_private_types_in_public_api, sort_child_properties_last, unused_field, unused_element, no_leading_underscores_for_local_identifiers, unused_local_variable, unused_import
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
@@ -170,11 +170,34 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _handleGoogleSignIn() {
-    try {
-      GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
-    } catch (e) {
-      print(e);
+  Future<void> _handleGoogleSignIn() async {
+  try {
+    // Trigger the Google Sign In process
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) return;
+
+    // Obtain auth details from the request
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Sign in to Firebase with the credential
+    final UserCredential userCredential = 
+        await _auth.signInWithCredential(credential);
+        
+    // Navigate to home page after successful sign in
+    if (userCredential.user != null) {
+      Navigator.pushReplacementNamed(context, '/home');
     }
+  } catch (e) {
+    print("Error signing in with Google: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Failed to sign in with Google: $e")),
+    );
   }
+}
 }

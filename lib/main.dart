@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+      name: 'AlumniConnect',
       options: FirebaseOptions(
           apiKey: "AIzaSyD3x9nQKxoBD8xr-zWMvmsoo5TqTZxgpfk",
           appId: "1:684205074999:web:868363c89a534ab84dedb2",
