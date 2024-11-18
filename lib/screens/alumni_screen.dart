@@ -206,9 +206,10 @@ class _AlumniScreenState extends State<AlumniScreen> {
                     return AlumniCard(
                       index: index,
                       isSelected: selectedCardIndex == index,
-                      name: alumni['NAME'],
+                      name: alumni['NAME'] ?? 'Unknown',
                       company: alumni['COMPANY'],
                       batch: alumni['BATCH'],
+                      branch: alumni['BRANCH'],
                       profilePicUrl: alumni['PIC'],
                       profileLink: alumni['PROFILE'],
                       onTap: () {
