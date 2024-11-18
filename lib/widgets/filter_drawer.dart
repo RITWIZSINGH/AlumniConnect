@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
 
@@ -17,15 +17,15 @@ class _FilterDrawerState extends State<FilterDrawer> {
   int? selectedBatch;
 
   final List<String> fields = ['IT', 'Core', 'Research'];
-  final List<String> branches = [
-    'Computer Science and Engineering',
-    'Electronics and Communication Engineering',
-    'Mechanical Engineering',
-    'Materials Science & Engineering',
-    'Electrical Engineering',
-    'Civil Engineering',
-    'Chemical Engineering'
-  ];
+  final Map<String, String> branchMapping = {
+    'Computer Science and Engineering': 'CSE',
+    'Electronics and Communication Engineering': 'ECE',
+    'Mechanical Engineering': 'ME',
+    'Materials Science & Engineering': 'MSE',
+    'Electrical Engineering': 'EE',
+    'Civil Engineering': 'CE',
+    'Chemical Engineering': 'CHE'
+  };
   final List<int> batchYears = List.generate(25, (index) => 2000 + index);
 
   @override
@@ -68,16 +68,16 @@ class _FilterDrawerState extends State<FilterDrawer> {
             ),
             ExpansionTile(
               title: Text('Branch'),
-              children: branches.map((branch) {
+              children: branchMapping.keys.map((branch) {
                 return CheckboxListTile(
                   title: Text(branch),
-                  value: selectedBranches.contains(branch),
+                  value: selectedBranches.contains(branchMapping[branch]),
                   onChanged: (bool? value) {
                     setState(() {
                       if (value == true) {
-                        selectedBranches.add(branch);
+                        selectedBranches.add(branchMapping[branch]!);
                       } else {
-                        selectedBranches.remove(branch);
+                        selectedBranches.remove(branchMapping[branch]!);
                       }
                     });
                   },
