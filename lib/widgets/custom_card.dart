@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'dart:ui';
 
-class AlumniCard extends StatelessWidget {
+class AlumniCard extends StatefulWidget {
   final int index;
   final bool isSelected;
   final String name;
@@ -28,6 +28,49 @@ class AlumniCard extends StatelessWidget {
     required this.onTap,
   }) : super(key: key);
 
+  @override
+  State<AlumniCard> createState() => _AlumniCardState();
+}
+
+class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+    
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutBack,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(AlumniCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isSelected != oldWidget.isSelected) {
+      if (widget.isSelected) {
+        _animationController.forward();
+      } else {
+        _animationController.reverse();
+      }
+    }
+  }
+
   Future<void> _launchURL(String? url) async {
     try {
       if (url != null && await canLaunchUrlString(url)) {
@@ -44,7 +87,7 @@ class AlumniCard extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Request Referral'),
-          content: Text('Would you like to request a referral from $name?'),
+          content: Text('Would you like to request a referral from ${widget.name}?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -64,191 +107,191 @@ class AlumniCard extends StatelessWidget {
   }
 
   Widget _buildExpandedCard(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Stack(
-        children: [
-          // Blurred background
-          Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-              child: Container(
-                color: Colors.black.withOpacity(0.5),
-              ),
-            ),
-          ),
-          // Centered card
-          Center(
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.9,
-              constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.7),
-              child: Card(
-                elevation: 12,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Profile Image
-                        Container(
-                          width: 150,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.teal.shade200,
-                              width: 3,
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 75,
-                            backgroundImage: profilePicUrl != null
-                                ? NetworkImage(profilePicUrl!)
-                                : null,
-                            child: profilePicUrl == null
-                                ? Icon(Icons.person,
-                                    size: 80, color: Colors.teal)
-                                : null,
-                          ),
-                        ),
-                        SizedBox(height: 24),
-
-                        // Name
-                        Text(
-                          name.toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 16),
-
-                        // Company
-                        if (company != null) ...[
-                          Text(
-                            company!,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.blueGrey,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 16),
-                        ],
-                        // Batch and Branch
-                        Container(
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.teal.shade50,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.school, color: Colors.teal),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Batch of ${batch?.toString() ?? "N/A"}',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.teal.shade700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              if (branch != null) ...[
-                                SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.engineering, color: Colors.teal),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      branch!,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.teal.shade700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 24),
-
-                        // Buttons
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () => _showReferralDialog(context),
-                                icon: Icon(
-                                  Icons.mail_outline,
-                                  color: Colors.white,
-                                ),
-                                label: Text(
-                                  'ASK 4 REFERRAL',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            if (profileLink != null)
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () => _launchURL(profileLink),
-                                  icon: Icon(
-                                    Icons.link,
-                                    color: Colors.white,
-                                  ),
-                                  label: Text(
-                                    'LinkedIn',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    padding: EdgeInsets.symmetric(vertical: 16),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ],
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: Tween<double>(begin: 0.6, end: 1.0)
+              .animate(_animationController)
+              .value,
+          child: GestureDetector(
+            onTap: widget.onTap,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
                     ),
                   ),
                 ),
-              ),
+                Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.7),
+                    child: Card(
+                      elevation: 12,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.all(24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 150,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.teal.shade200,
+                                    width: 3,
+                                  ),
+                                ),
+                                child: CircleAvatar(
+                                  radius: 75,
+                                  backgroundImage: widget.profilePicUrl != null
+                                      ? NetworkImage(widget.profilePicUrl!)
+                                      : null,
+                                  child: widget.profilePicUrl == null
+                                      ? Icon(Icons.person,
+                                          size: 80, color: Colors.teal)
+                                      : null,
+                                ),
+                              ),
+                              SizedBox(height: 24),
+                              Text(
+                                widget.name.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 16),
+                              if (widget.company != null) ...[
+                                Text(
+                                  widget.company!,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.blueGrey,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 16),
+                              ],
+                              Container(
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.teal.shade50,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.school, color: Colors.teal),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Batch of ${widget.batch?.toString() ?? "N/A"}',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.teal.shade700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    if (widget.branch != null) ...[
+                                      SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.engineering, color: Colors.teal),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            widget.branch!,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.teal.shade700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 24),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () => _showReferralDialog(context),
+                                      icon: Icon(
+                                        Icons.mail_outline,
+                                        color: Colors.white,
+                                      ),
+                                      label: Text(
+                                        'ASK 4 REFERRAL',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.teal,
+                                        padding: EdgeInsets.symmetric(vertical: 16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 16),
+                                  if (widget.profileLink != null)
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        onPressed: () => _launchURL(widget.profileLink),
+                                        icon: Icon(
+                                          Icons.link,
+                                          color: Colors.white,
+                                        ),
+                                        label: Text(
+                                          'LinkedIn',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                          padding: EdgeInsets.symmetric(vertical: 16),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -258,7 +301,7 @@ class AlumniCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shadowColor: Colors.teal,
       child: InkWell(
-        onTap: onTap,
+        onTap: widget.onTap,
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Row(
@@ -266,8 +309,8 @@ class AlumniCard extends StatelessWidget {
               CircleAvatar(
                 radius: 30,
                 backgroundImage:
-                    profilePicUrl != null ? NetworkImage(profilePicUrl!) : null,
-                child: profilePicUrl == null
+                    widget.profilePicUrl != null ? NetworkImage(widget.profilePicUrl!) : null,
+                child: widget.profilePicUrl == null
                     ? Icon(Icons.person, size: 40, color: Colors.teal)
                     : null,
               ),
@@ -278,14 +321,14 @@ class AlumniCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      name.toUpperCase(),
+                      widget.name.toUpperCase(),
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    if (company != null) ...[
+                    if (widget.company != null) ...[
                       SizedBox(height: 4),
                       Text(
-                        company!,
+                        widget.company!,
                         style: TextStyle(fontSize: 14, color: Colors.blueGrey),
                       ),
                     ],
@@ -300,7 +343,7 @@ class AlumniCard extends StatelessWidget {
                         ),
                         SizedBox(width: 4),
                         Text(
-                          'Batch of ${batch?.toString() ?? "N/A"}',
+                          'Batch of ${widget.batch?.toString() ?? "N/A"}',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.teal.shade400,
@@ -320,7 +363,7 @@ class AlumniCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isSelected) {
+    if (widget.isSelected) {
       return _buildExpandedCard(context);
     }
     return _buildCollapsedCard();

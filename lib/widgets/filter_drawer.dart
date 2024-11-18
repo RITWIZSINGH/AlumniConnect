@@ -49,7 +49,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
               ),
             ),
             ExpansionTile(
-              title: Text('Field'),
+              title: Text('FIELD',style: TextStyle(fontWeight: FontWeight.bold),),
               children: fields.map((field) {
                 return CheckboxListTile(
                   title: Text(field),
@@ -67,7 +67,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
               }).toList(),
             ),
             ExpansionTile(
-              title: Text('Branch'),
+              title: Text('BRANCH',style: TextStyle(fontWeight: FontWeight.bold),),
               children: branchMapping.keys.map((branch) {
                 return CheckboxListTile(
                   title: Text(branch),
@@ -85,7 +85,10 @@ class _FilterDrawerState extends State<FilterDrawer> {
               }).toList(),
             ),
             ExpansionTile(
-              title: Text('Batch'),
+              title: Text(
+                'BATCH',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
