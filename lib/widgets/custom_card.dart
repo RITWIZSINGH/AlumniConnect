@@ -1,6 +1,8 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors_in_immutables, prefer_const_constructors, use_super_parameters
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'dart:ui';
 
 class AlumniCard extends StatelessWidget {
   final int index;
@@ -27,8 +29,12 @@ class AlumniCard extends StatelessWidget {
   }) : super(key: key);
 
   Future<void> _launchURL(String? url) async {
-    if (url != null && await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+    try {
+      if (url != null && await canLaunchUrlString(url)) {
+        await launchUrlString(url);
+      }
+    } on PlatformException catch (e) {
+      debugPrint('URL launcher error: $e');
     }
   }
 
@@ -57,111 +63,266 @@ class AlumniCard extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: isSelected ? 8 : 2,
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      shadowColor: Colors.teal,
-      child: InkWell(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          height: isSelected ? 300 : 120,
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: isSelected ? 40 : 30,
-                    backgroundImage: profilePicUrl != null 
-                      ? NetworkImage(profilePicUrl!) 
-                      : null,
-                    child: profilePicUrl == null
-                        ? Icon(Icons.person,
-                            size: isSelected ? 50 : 40, color: Colors.teal)
-                        : null,
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
+  Widget _buildExpandedCard(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        children: [
+          // Blurred background
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+              ),
+            ),
+          ),
+          // Centered card
+          Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.7),
+              child: Card(
+                elevation: 12,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        // Profile Image
+                        Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.teal.shade200,
+                              width: 3,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 75,
+                            backgroundImage: profilePicUrl != null
+                                ? NetworkImage(profilePicUrl!)
+                                : null,
+                            child: profilePicUrl == null
+                                ? Icon(Icons.person,
+                                    size: 80, color: Colors.teal)
+                                : null,
+                          ),
+                        ),
+                        SizedBox(height: 24),
+
+                        // Name
                         Text(
                           name.toUpperCase(),
                           style: TextStyle(
-                              fontSize: isSelected ? 22 : 18,
-                              fontWeight: FontWeight.bold),
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 4),
+                        SizedBox(height: 16),
+
+                        // Company
                         if (company != null) ...[
                           Text(
                             company!,
-                            style: TextStyle(fontSize: 14, color: Colors.blueGrey),
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.blueGrey,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 4),
+                          SizedBox(height: 16),
                         ],
+                        // Batch and Branch
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.teal.shade50,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.school, color: Colors.teal),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Batch of ${batch?.toString() ?? "N/A"}',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.teal.shade700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (branch != null) ...[
+                                SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.engineering, color: Colors.teal),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      branch!,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.teal.shade700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 24),
+
+                        // Buttons
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Icon(
-                              Icons.badge,
-                              size: 22,
-                              color: Colors.teal.shade600,
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () => _showReferralDialog(context),
+                                icon: Icon(
+                                  Icons.mail_outline,
+                                  color: Colors.white,
+                                ),
+                                label: Text(
+                                  'ASK 4 REFERRAL',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
                             ),
-                            SizedBox(width: 4),
-                            Text(
-                              'Batch of ${batch?.toString() ?? "N/A"}',
-                              style: TextStyle(
-                                  fontSize: 14, color: Colors.teal.shade400),
-                            ),
+                            SizedBox(width: 16),
+                            if (profileLink != null)
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () => _launchURL(profileLink),
+                                  icon: Icon(
+                                    Icons.link,
+                                    color: Colors.white,
+                                  ),
+                                  label: Text(
+                                    'LinkedIn',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
-              if (isSelected) ...[
-                SizedBox(height: 16),
-                if (branch != null) 
-                  Text(
-                    'Branch: $branch',
-                    style: TextStyle(fontSize: 16, color: Colors.blueGrey),
-                  ),
-                Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCollapsedCard() {
+    return Card(
+      elevation: 2,
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      shadowColor: Colors.teal,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundImage:
+                    profilePicUrl != null ? NetworkImage(profilePicUrl!) : null,
+                child: profilePicUrl == null
+                    ? Icon(Icons.person, size: 40, color: Colors.teal)
+                    : null,
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    ElevatedButton.icon(
-                      onPressed: () => _showReferralDialog(context),
-                      icon: Icon(Icons.person_add),
-                      label: Text('Ask for Referral'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      ),
+                    Text(
+                      name.toUpperCase(),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    if (profileLink != null)
-                      ElevatedButton.icon(
-                        onPressed: () => _launchURL(profileLink),
-                        icon: Icon(Icons.link),
-                        label: Text('LinkedIn'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        ),
+                    if (company != null) ...[
+                      SizedBox(height: 4),
+                      Text(
+                        company!,
+                        style: TextStyle(fontSize: 14, color: Colors.blueGrey),
                       ),
+                    ],
+                    SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.badge,
+                          size: 22,
+                          color: Colors.teal.shade600,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'Batch of ${batch?.toString() ?? "N/A"}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.teal.shade400,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isSelected) {
+      return _buildExpandedCard(context);
+    }
+    return _buildCollapsedCard();
   }
 }

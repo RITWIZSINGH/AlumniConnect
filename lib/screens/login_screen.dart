@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pop(context);
     } catch (e) {
       print("Error signing up: $e");
       ScaffoldMessenger.of(context).showSnackBar(

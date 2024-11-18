@@ -168,6 +168,12 @@ class _AlumniScreenState extends State<AlumniScreen> {
     );
   }
 
+   void _handleCardTap(int? index) {
+    setState(() {
+      selectedCardIndex = selectedCardIndex == index ? null : index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -175,54 +181,53 @@ class _AlumniScreenState extends State<AlumniScreen> {
         endDrawer: FilterDrawer(
           onApplyFilter: applyFilters,
         ),
-        body: Container(
-          color: Colors.teal.shade100,
-          child: CustomScrollView(
-            controller: _scrollController,
-            slivers: <Widget>[
-              CustomAppBar(
-                searchController: _searchController,
-                onFilterTap: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-              ),
-              SliverToBoxAdapter(
-                child: _buildActiveFilters(),
-              ),
-              SliverToBoxAdapter(
-                child: isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : SizedBox.shrink(),
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    if (index == alumniItems.length) {
-                      return isFetchingMore
-                          ? Center(child: CircularProgressIndicator())
-                          : SizedBox.shrink();
-                    }
-                    var alumni = alumniItems[index];
-                    return AlumniCard(
-                      index: index,
-                      isSelected: selectedCardIndex == index,
-                      name: alumni['NAME'] ?? 'Unknown',
-                      company: alumni['COMPANY'],
-                      batch: alumni['BATCH'],
-                      branch: alumni['BRANCH'],
-                      profilePicUrl: alumni['PIC'],
-                      profileLink: alumni['PROFILE'],
-                      onTap: () {
-                        setState(() {
-                          selectedCardIndex = index;
-                        });
-                      },
-                    );
+        body: GestureDetector(
+          onTap: () => _handleCardTap(null),
+          child: Container(
+            color: Colors.teal.shade100,
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: <Widget>[
+                CustomAppBar(
+                  searchController: _searchController,
+                  onFilterTap: () {
+                    Scaffold.of(context).openEndDrawer();
                   },
-                  childCount: alumniItems.length + (isFetchingMore ? 1 : 0),
                 ),
-              ),
-            ],
+                SliverToBoxAdapter(
+                  child: _buildActiveFilters(),
+                ),
+                SliverToBoxAdapter(
+                  child: isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : SizedBox.shrink(),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      if (index == alumniItems.length) {
+                        return isFetchingMore
+                            ? Center(child: CircularProgressIndicator())
+                            : SizedBox.shrink();
+                      }
+                      var alumni = alumniItems[index];
+                      return AlumniCard(
+                        index: index,
+                        isSelected: selectedCardIndex == index,
+                        name: alumni['NAME'] ?? 'Unknown',
+                        company: alumni['COMPANY'],
+                        batch: alumni['BATCH'],
+                        branch: alumni['BRANCH'],
+                        profilePicUrl: alumni['PIC'],
+                        profileLink: alumni['PROFILE'],
+                        onTap: () => _handleCardTap(index),
+                      );
+                    },
+                    childCount: alumniItems.length + (isFetchingMore ? 1 : 0),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

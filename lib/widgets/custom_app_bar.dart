@@ -30,14 +30,16 @@ class CustomAppBar extends StatelessWidget {
                 );
               },
               child: Container(
+                foregroundDecoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                ),
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: Text(
                   'LOGIN',
                   style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold
-                  ),
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white,
