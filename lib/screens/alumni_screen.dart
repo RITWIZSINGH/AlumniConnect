@@ -4,12 +4,14 @@ import '../widgets/custom_app_bar.dart';
 import '../widgets/filter_drawer.dart';
 import '../services/alumni_data.dart';
 import '../widgets/custom_card.dart';
+
 class AlumniScreen extends StatefulWidget {
   @override
   _AlumniScreenState createState() => _AlumniScreenState();
 }
 
 class _AlumniScreenState extends State<AlumniScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int? selectedCardIndex;
   List<dynamic> alumniItems = [];
   bool isLoading = true;
@@ -168,7 +170,7 @@ class _AlumniScreenState extends State<AlumniScreen> {
     );
   }
 
-   void _handleCardTap(int? index) {
+  void _handleCardTap(int? index) {
     setState(() {
       selectedCardIndex = selectedCardIndex == index ? null : index;
     });
@@ -178,6 +180,7 @@ class _AlumniScreenState extends State<AlumniScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         endDrawer: FilterDrawer(
           onApplyFilter: applyFilters,
         ),
@@ -191,7 +194,7 @@ class _AlumniScreenState extends State<AlumniScreen> {
                 CustomAppBar(
                   searchController: _searchController,
                   onFilterTap: () {
-                    Scaffold.of(context).openEndDrawer();
+                    _scaffoldKey.currentState?.openEndDrawer();
                   },
                 ),
                 SliverToBoxAdapter(

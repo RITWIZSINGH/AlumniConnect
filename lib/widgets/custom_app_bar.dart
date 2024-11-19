@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print, unnecessary_type_check, library_private_types_in_public_api, sort_child_properties_last, unused_import, prefer_const_constructors_in_immutables
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print, prefer_const_constructors_in_immutables
 import 'package:alumni_connect/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -13,72 +13,123 @@ class CustomAppBar extends StatelessWidget {
     return SliverAppBar(
       backgroundColor: Colors.blue.shade700,
       floating: true,
-      elevation: 20,
-      shadowColor: Colors.black,
+      elevation: 8,
+      shadowColor: Colors.black.withValues(),
       snap: true,
+      actions: [
+        // Add filter icon in the actions
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.tune,
+                color: Colors.blue.shade700,
+              ),
+              onPressed: onFilterTap,
+              tooltip: 'Filter',
+            ),
+          ),
+        ),
+      ],
       flexibleSpace: FlexibleSpaceBar(
-        titlePadding: EdgeInsetsDirectional.only(start: 16, bottom: 8),
+        titlePadding: EdgeInsetsDirectional.only(start: 16, bottom: 8, end: 60),
         title: Row(
           children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
-                  ),
-                );
-              },
-              child: Container(
-                foregroundDecoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                child: Text(
-                  'LOGIN',
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: Colors.blue.shade700),
-                ),
-              ),
-            ),
-            SizedBox(width: 10),
+            _buildLoginButton(context),
+            SizedBox(width: 12),
             Expanded(
-              child: Container(
-                height: 36,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: TextField(
-                  controller: searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    hintStyle: TextStyle(color: Colors.grey.shade600),
-                    prefixIcon: Icon(Icons.search, color: Colors.blue.shade700),
-                    border: InputBorder.none,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                  ),
-                ),
-              ),
+              child: _buildSearchField(),
             ),
-            SizedBox(width: 10),
-            CircleAvatar(
-              backgroundColor: Colors.white,
-              child: IconButton(
-                icon: Icon(Icons.filter_list, color: Colors.blue.shade700),
-                onPressed: onFilterTap,
-              ),
-            ),
-            SizedBox(width: 10)
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoginButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(),
+          ),
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(),
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Text(
+          'LOGIN',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.blue.shade700,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchField() {
+    return Container(
+      height: 40,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(),
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextField(
+          controller: searchController,
+          decoration: InputDecoration(
+            hintText: 'Search alumni...',
+            hintStyle: TextStyle(
+              color: Colors.grey.shade600,
+              fontSize: 14,
+            ),
+            prefixIcon: Icon(
+              Icons.search,
+              color: Colors.blue.shade700,
+              size: 20,
+            ),
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 12,
+              horizontal: 16,
+            ),
+          ),
         ),
       ),
     );
