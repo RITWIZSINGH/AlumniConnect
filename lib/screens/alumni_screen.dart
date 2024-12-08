@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, unnecessary_type_check, library_private_types_in_public_api, use_key_in_widget_constructors, prefer_final_fields
 import 'package:flutter/material.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/filter_drawer.dart';
@@ -12,16 +11,16 @@ class AlumniScreen extends StatefulWidget {
 
 class _AlumniScreenState extends State<AlumniScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  
   int? selectedCardIndex;
   List<dynamic> alumniItems = [];
   bool isLoading = true;
   int remaining = 50;
   bool isFetchingMore = false;
   AlumniData alumniData = AlumniData();
-  ScrollController _scrollController = ScrollController();
-  TextEditingController _searchController = TextEditingController();
   
-  // Add filter state variables
   List<String> activeFields = [];
   List<String> activeBranches = [];
   List<int> activeBatch = [];
@@ -184,33 +183,42 @@ class _AlumniScreenState extends State<AlumniScreen> {
         endDrawer: FilterDrawer(
           onApplyFilter: applyFilters,
         ),
-        body: GestureDetector(
-          onTap: () => _handleCardTap(null),
-          child: Container(
-            color: Colors.teal.shade100,
-            child: CustomScrollView(
-              controller: _scrollController,
-              slivers: <Widget>[
-                CustomAppBar(
-                  searchController: _searchController,
-                  onFilterTap: () {
-                    _scaffoldKey.currentState?.openEndDrawer();
-                  },
-                ),
-                SliverToBoxAdapter(
-                  child: _buildActiveFilters(),
-                ),
-                SliverToBoxAdapter(
-                  child: isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : SizedBox.shrink(),
-                ),
-                SliverList(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.teal.shade50,
+                Colors.white,
+              ],
+            ),
+          ),
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: <Widget>[
+              CustomAppBar(
+                searchController: _searchController,
+                onFilterTap: () {
+                  _scaffoldKey.currentState?.openEndDrawer();
+                },
+              ),
+              SliverToBoxAdapter(
+                child: _buildActiveFilters(),
+              ),
+              SliverPadding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
                       if (index == alumniItems.length) {
                         return isFetchingMore
-                            ? Center(child: CircularProgressIndicator())
+                            ? Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              )
                             : SizedBox.shrink();
                       }
                       var alumni = alumniItems[index];
@@ -223,14 +231,15 @@ class _AlumniScreenState extends State<AlumniScreen> {
                         branch: alumni['BRANCH'],
                         profilePicUrl: alumni['PIC'],
                         profileLink: alumni['PROFILE'],
+                        field: alumni['FIELD'],
                         onTap: () => _handleCardTap(index),
                       );
                     },
                     childCount: alumniItems.length + (isFetchingMore ? 1 : 0),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
