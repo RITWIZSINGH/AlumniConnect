@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/filter_drawer.dart';
+import '../widgets/filter_drawer/filter_drawer.dart';
 import '../services/alumni_data.dart';
 import '../widgets/custom_card.dart';
 
@@ -47,19 +47,19 @@ class _AlumniScreenState extends State<AlumniScreen> {
   }
 
   void _scrollListener() {
-  // Check if any filters are active
-  bool isFiltersActive = activeFields.isNotEmpty || 
-                         activeBranches.isNotEmpty || 
-                         activeBatch.isNotEmpty;
+    // Check if any filters are active
+    bool isFiltersActive = activeFields.isNotEmpty ||
+        activeBranches.isNotEmpty ||
+        activeBatch.isNotEmpty;
 
-  // Only fetch more data if no filters are applied
-  if (_scrollController.position.pixels == 
-      _scrollController.position.maxScrollExtent) {
-    if (!isFiltersActive) {
-      fetchAlumniData();
+    // Only fetch more data if no filters are applied
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      if (!isFiltersActive) {
+        fetchAlumniData();
+      }
     }
   }
-}
 
   Future<void> fetchAlumniData({String query = ''}) async {
     if (isFetchingMore || remaining == 0) return;
@@ -131,8 +131,12 @@ class _AlumniScreenState extends State<AlumniScreen> {
 
   Widget _buildActiveFilters() {
     if (activeFields.isEmpty && activeBranches.isEmpty && activeBatch.isEmpty) {
-      return const SizedBox.shrink();
+    // Only reset if filters were previously applied
+    if (activeFields.isNotEmpty || activeBranches.isNotEmpty || activeBatch.isNotEmpty) {
+      resetAndFetchNewAlumni();
     }
+    return const SizedBox.shrink();
+  }
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
