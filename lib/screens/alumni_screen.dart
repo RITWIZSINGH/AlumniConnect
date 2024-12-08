@@ -73,6 +73,21 @@ class _AlumniScreenState extends State<AlumniScreen> {
     }
   }
 
+  Future<void> resetAndFetchNewAlumni() async {
+    setState(() {
+      alumniItems = [];
+      isLoading = true;
+      remaining = 50;
+      isFetchingMore = false;
+    });
+
+    // Reset the AlumniData loaded indexes
+    alumniData.resetLoadedIndexes();
+    
+    // Fetch new alumni data
+    await fetchAlumniData();
+  }
+
   void _onSearchChanged() {
     alumniData.searchAlumniData(_searchController.text).then((data) {
       setState(() {
@@ -107,62 +122,105 @@ class _AlumniScreenState extends State<AlumniScreen> {
     }
 
     return Container(
-      padding: EdgeInsets.all(8),
-      color: Colors.grey.shade200,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(
-                'Active Filters (${alumniItems.length} results)',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Spacer(),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    activeFields = [];
-                    activeBranches = [];
-                    activeBatch = [];
-                  });
-                  fetchAlumniData();
-                },
-                child: Text('Clear All'),
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Icon(Icons.filter_list, color: Colors.teal),
+                SizedBox(width: 8),
+                Text(
+                  'Active Filters (${alumniItems.length} results)',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal.shade700,
+                  ),
+                ),
+                Spacer(),
+                TextButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      activeFields = [];
+                      activeBranches = [];
+                      activeBatch = [];
+                    });
+                    resetAndFetchNewAlumni();
+                  },
+                  icon: Icon(Icons.clear_all),
+                  label: Text('Clear All'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red.shade400,
+                  ),
+                ),
+              ],
+            ),
           ),
-          Wrap(
-            spacing: 8,
-            children: [
-              ...activeFields.map((field) => Chip(
-                    label: Text(field),
-                    onDeleted: () {
-                      setState(() {
-                        activeFields.remove(field);
-                      });
-                      applyFilters(activeFields, activeBranches, activeBatch);
-                    },
-                  )),
-              ...activeBranches.map((branch) => Chip(
-                    label: Text(branch),
-                    onDeleted: () {
-                      setState(() {
-                        activeBranches.remove(branch);
-                      });
-                      applyFilters(activeFields, activeBranches, activeBatch);
-                    },
-                  )),
-              ...activeBatch.map((year) => Chip(
-                    label: Text(year.toString()),
-                    onDeleted: () {
-                      setState(() {
-                        activeBatch.remove(year);
-                      });
-                      applyFilters(activeFields, activeBranches, activeBatch);
-                    },
-                  )),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                ...activeFields.map((field) => Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Chip(
+                        label: Text(field),
+                        deleteIcon: Icon(Icons.close, size: 18),
+                        onDeleted: () {
+                          setState(() {
+                            activeFields.remove(field);
+                          });
+                          applyFilters(activeFields, activeBranches, activeBatch);
+                        },
+                        backgroundColor: Colors.teal.shade100,
+                        labelStyle: TextStyle(color: Colors.teal.shade700),
+                      ),
+                    )),
+                ...activeBranches.map((branch) => Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Chip(
+                        label: Text(branch),
+                        deleteIcon: Icon(Icons.close, size: 18),
+                        onDeleted: () {
+                          setState(() {
+                            activeBranches.remove(branch);
+                          });
+                          applyFilters(activeFields, activeBranches, activeBatch);
+                        },
+                        backgroundColor: Colors.blue.shade100,
+                        labelStyle: TextStyle(color: Colors.blue.shade700),
+                      ),
+                    )),
+                ...activeBatch.map((year) => Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Chip(
+                        label: Text(year.toString()),
+                        deleteIcon: Icon(Icons.close, size: 18),
+                        onDeleted: () {
+                          setState(() {
+                            activeBatch.remove(year);
+                          });
+                          applyFilters(activeFields, activeBranches, activeBatch);
+                        },
+                        backgroundColor: Colors.purple.shade100,
+                        labelStyle: TextStyle(color: Colors.purple.shade700),
+                      ),
+                    )),
+              ],
+            ),
           ),
         ],
       ),

@@ -6,6 +6,10 @@ import 'network_helper.dart';
 class AlumniData {
   List<int> loadedIndexes = [];
 
+  void resetLoadedIndexes() {
+    loadedIndexes.clear();
+  }
+
  Future<Map<String, dynamic>> getAlumniData() async {
     NetworkHelper networkHelper = NetworkHelper('http://localhost:3001/ran');
 
