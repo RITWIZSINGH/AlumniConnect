@@ -1,6 +1,8 @@
 // ignore_for_file: use_super_parameters
 
 import 'package:flutter/material.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_typography.dart';
 
 class CustomDrawerHeader extends StatelessWidget {
   final String title;
@@ -12,30 +14,52 @@ class CustomDrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DrawerHeader(
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
       decoration: BoxDecoration(
-        color: const Color(0xFF1976D2),
+        color: AppColors.primary,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alpha: .1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primary,
+            AppColors.primaryDark,
+          ],
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: .15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.filter_list_rounded,
               color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+              size: 28,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            style: AppTypography.drawerHeaderTitle,
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Customize your search preferences',
+            style: AppTypography.drawerHeaderSubtitle,
+          ),
         ],
       ),
     );

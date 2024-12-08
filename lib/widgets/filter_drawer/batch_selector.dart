@@ -1,7 +1,7 @@
-// ignore_for_file: use_super_parameters
-
 import 'package:flutter/material.dart';
-import '/constants/filter_constant.dart';
+import '../../constants/filter_constant.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_typography.dart';
 
 class BatchSelector extends StatelessWidget {
   final int? selectedBatch;
@@ -15,45 +15,53 @@ class BatchSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: const Text(
-        'BATCH',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF1976D2),
-          fontSize: 16,
-        ),
+    return Theme(
+      data: Theme.of(context).copyWith(
+        dividerColor: Colors.transparent,
       ),
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color:const Color(0xFFBDBDBD)),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<int>(
-                value: selectedBatch,
-                hint: const Text('Select Batch'),
-                isExpanded: true,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ExpansionTile(
+        title: Text('BATCH', style: AppTypography.sectionTitle),
+        backgroundColor: AppColors.background,
+        collapsedBackgroundColor: AppColors.background,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.surfaceLight,
+                border: Border.all(color: AppColors.border),
                 borderRadius: BorderRadius.circular(8),
-                items: FilterConstants.batchYears.map((int year) {
-                  return DropdownMenuItem<int>(
-                    value: year,
-                    child: Text(
-                      year.toString(),
-                      style: const TextStyle(fontSize: 14),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<int>(
+                  value: selectedBatch,
+                  hint: Text(
+                    'Select Batch',
+                    style: AppTypography.listItem.copyWith(
+                      color: AppColors.textSecondary,
                     ),
-                  );
-                }).toList(),
-                onChanged: onBatchSelected,
+                  ),
+                  isExpanded: true,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  borderRadius: BorderRadius.circular(8),
+                  icon: const Icon(Icons.arrow_drop_down, color: AppColors.primary),
+                  items: FilterConstants.batchYears.map((int year) {
+                    return DropdownMenuItem<int>(
+                      value: year,
+                      child: Text(
+                        year.toString(),
+                        style: AppTypography.listItem,
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: onBatchSelected,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 8),
+        ],
+      ),
     );
   }
 }

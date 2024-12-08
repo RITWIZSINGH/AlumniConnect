@@ -1,15 +1,18 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'filter_section.dart';
 import 'batch_selector.dart';
-import '/widgets/common/custom_drawer_header.dart';
-import '/constants/filter_constant.dart';
+import '../common/custom_drawer_header.dart';
+import '../../constants/filter_constant.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_typography.dart';
 
 class FilterDrawer extends StatefulWidget {
   final Function(List<String>, List<String>, List<int>) onApplyFilter;
 
-  FilterDrawer({required this.onApplyFilter});
+  const FilterDrawer({
+    Key? key,
+    required this.onApplyFilter,
+  }) : super(key: key);
 
   @override
   _FilterDrawerState createState() => _FilterDrawerState();
@@ -23,36 +26,42 @@ class _FilterDrawerState extends State<FilterDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      elevation: 0,
       child: Container(
-        color: Colors.white,
+        color: AppColors.background,
         child: Column(
           children: [
-            CustomDrawerHeader(title: 'Filter Options'),
+            const CustomDrawerHeader(title: 'Filter Options'),
             Expanded(
               child: ListView(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 children: [
                   FilterSection(
                     title: 'FIELD',
-                    items: FilterConstants.fields.map((field) => 
-                      MapEntry(field, field)).toList(),
+                    items: FilterConstants.fields
+                        .map((field) => MapEntry(field, field))
+                        .toList(),
                     selectedItems: selectedFields,
                     onSelectionChanged: (items) {
-                      setState(() => selectedFields.clear());
-                      setState(() => selectedFields.addAll(items));
+                      setState(() {
+                        selectedFields.clear();
+                        selectedFields.addAll(items);
+                      });
                     },
                   ),
-                  Divider(height: 1, color: Color(0xFFE0E0E0)),
+                  Divider(height: 1, color: AppColors.divider),
                   FilterSection(
                     title: 'BRANCH',
                     items: FilterConstants.branchMapping.entries.toList(),
                     selectedItems: selectedBranches,
                     onSelectionChanged: (items) {
-                      setState(() => selectedBranches.clear());
-                      setState(() => selectedBranches.addAll(items));
+                      setState(() {
+                        selectedBranches.clear();
+                        selectedBranches.addAll(items);
+                      });
                     },
                   ),
-                  Divider(height: 1, color: Color(0xFFE0E0E0)),
+                  Divider(height: 1, color: AppColors.divider),
                   BatchSelector(
                     selectedBatch: selectedBatch,
                     onBatchSelected: (batch) {
@@ -62,13 +71,24 @@ class _FilterDrawerState extends State<FilterDrawer> {
                 ],
               ),
             ),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadowLight,
+                    blurRadius: 4,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: SafeArea(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF1976D2),
-                    minimumSize: Size(double.infinity, 56),
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.textLight,
+                    minimumSize: const Size(double.infinity, 56),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -82,14 +102,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                     );
                     Navigator.pop(context);
                   },
-                  child: Text(
-                    'Apply Filters',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: Text('Apply Filters', style: AppTypography.buttonText),
                 ),
               ),
             ),
