@@ -1,3 +1,5 @@
+// ignore_for_file: use_super_parameters
+
 import 'package:flutter/material.dart';
 import '../../constants/filter_constant.dart';
 import '../../theme/app_colors.dart';
@@ -20,7 +22,7 @@ class BatchSelector extends StatelessWidget {
         dividerColor: Colors.transparent,
       ),
       child: ExpansionTile(
-        title: Text('BATCH', style: AppTypography.sectionTitle),
+        title: const Text('BATCH', style: AppTypography.sectionTitle),
         backgroundColor: AppColors.background,
         collapsedBackgroundColor: AppColors.background,
         children: [

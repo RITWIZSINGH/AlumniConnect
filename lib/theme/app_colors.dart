@@ -24,6 +24,6 @@ class AppColors {
   static const Color hover = Color(0xFFBBDEFB);
   
   // Shadow Colors
-  static Color shadowLight = Colors.black.withOpacity(0.1);
-  static Color shadowMedium = Colors.black.withOpacity(0.15);
+  static Color shadowLight = Colors.black.withValues(alpha: .1);
+  static Color shadowMedium = Colors.black.withValues(alpha: .15);
 }

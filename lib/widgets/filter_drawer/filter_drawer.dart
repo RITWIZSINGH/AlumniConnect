@@ -1,3 +1,5 @@
+// ignore_for_file: use_super_parameters, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'filter_section.dart';
 import 'batch_selector.dart';
@@ -49,7 +51,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       });
                     },
                   ),
-                  Divider(height: 1, color: AppColors.divider),
+                  const Divider(height: 1, color: AppColors.divider),
                   FilterSection(
                     title: 'BRANCH',
                     items: FilterConstants.branchMapping.entries.toList(),
@@ -61,7 +63,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       });
                     },
                   ),
-                  Divider(height: 1, color: AppColors.divider),
+                  const Divider(height: 1, color: AppColors.divider),
                   BatchSelector(
                     selectedBatch: selectedBatch,
                     onBatchSelected: (batch) {
@@ -102,7 +104,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                     );
                     Navigator.pop(context);
                   },
-                  child: Text('Apply Filters', style: AppTypography.buttonText),
+                  child: const Text('Apply Filters', style: AppTypography.buttonText),
                 ),
               ),
             ),
