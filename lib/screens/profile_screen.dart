@@ -40,6 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
+          print(data);
           if (data['items'].isNotEmpty) {
             final studentData = data['items'][0];
             setState(() {

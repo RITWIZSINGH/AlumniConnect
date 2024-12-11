@@ -10,7 +10,7 @@ class AlumniData {
     loadedIndexes.clear();
   }
 
- Future<Map<String, dynamic>> getAlumniData() async {
+  Future<Map<String, dynamic>> getAlumniData() async {
     NetworkHelper networkHelper = NetworkHelper('http://localhost:3001/ran');
 
     // Convert loadedIndexes to a list of integers
@@ -36,30 +36,30 @@ class AlumniData {
     return response;
   }
 
-
   // New function for searching alumni data
   Future<Map<String, dynamic>> searchAlumniData(String query) async {
-  final String searchUrl = 'http://localhost:3001/search?q=$query';
-  NetworkHelper networkHelper = NetworkHelper(searchUrl);
+    final String searchUrl = 'http://localhost:3001/search?q=$query';
+    NetworkHelper networkHelper = NetworkHelper(searchUrl);
 
-  var response = await networkHelper.getData(); // Assuming getData handles GET requests
+    var response =
+        await networkHelper.getData(); // Assuming getData handles GET requests
 
-  if (response is Map<String, dynamic> && response.containsKey('items')) {
-    return response;
-  } else {
-    print('Unexpected search format');
-    return {}; // Return an empty map if the response is unexpected
+    if (response is Map<String, dynamic> && response.containsKey('items')) {
+      return response;
+    } else {
+      print('Unexpected search format');
+      return {}; // Return an empty map if the response is unexpected
+    }
   }
-}
 
-   //Filtering Function for alumni's 
+  //Filtering Function for alumni's
   Future<Map<String, dynamic>> filterAlumniData({
     List<String> field = const [],
     List<String> branch = const [],
     List<int> batch = const [],
   }) async {
     NetworkHelper networkHelper = NetworkHelper("http://localhost:3001/filter");
-    
+
     // Prepare the filter criteria
     Map<String, dynamic> filterBody = {
       'field': field,
@@ -75,21 +75,16 @@ class AlumniData {
 
       // Check if response contains items
       if (response is Map && response.containsKey('items')) {
-        print('Received ${(response['items'] as List).length} filtered results');
+        print(
+            'Received ${(response['items'] as List).length} filtered results');
         return response;
       } else {
         print('Unexpected response format: $response');
-        return {
-          'items': [],
-          'error': 'Invalid response format'
-        };
+        return {'items': [], 'error': 'Invalid response format'};
       }
     } catch (e) {
       print('Error filtering alumni data: $e');
-      return {
-        'items': [],
-        'error': e.toString()
-      };
+      return {'items': [], 'error': e.toString()};
     }
   }
 }
