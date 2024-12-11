@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print, prefer_const_constructors_in_immutables
 import 'package:alumni_connect/screens/authScreens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class CustomAppBar extends StatelessWidget {
   final TextEditingController searchController;
@@ -82,14 +83,19 @@ class CustomAppBar extends StatelessWidget {
             ),
           ],
         ),
-        child: Text(
-          'LOGIN',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.blue.shade700,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
-          ),
+        child: Row(
+          children: [
+            Icon(LucideIcons.user),
+            Text(
+              'LOGIN',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.blue.shade700,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -109,26 +115,23 @@ class CustomAppBar extends StatelessWidget {
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextField(
-          controller: searchController,
-          decoration: InputDecoration(
-            hintText: 'Search alumni...',
-            hintStyle: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 14,
-            ),
-            prefixIcon: Icon(
-              Icons.search,
-              color: Colors.blue.shade700,
-              size: 20,
-            ),
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(
-              vertical: 12,
-              horizontal: 16,
-            ),
+      child: TextField(
+        controller: searchController,
+        decoration: InputDecoration(
+          hintText: 'Search alumni...',
+          hintStyle: TextStyle(
+            color: Colors.grey.shade800,
+            fontSize: 14,
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: Colors.blue.shade700,
+            size: 20,
+          ),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 16,
           ),
         ),
       ),
