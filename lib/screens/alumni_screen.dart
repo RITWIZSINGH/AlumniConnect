@@ -1,7 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import '../widgets/custom_app_bar.dart';
+import '../widgets/app_bar/custom_app_bar.dart';
 import '../widgets/filter_drawer/filter_drawer.dart';
 import '../services/alumni_data.dart';
 import '../widgets/custom_card.dart';
