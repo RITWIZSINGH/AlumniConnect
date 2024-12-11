@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import '../../widgets/auth/custom_textfield.dart';
@@ -10,7 +12,7 @@ class SignInScreen extends StatefulWidget {
   _SignInScreenState createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> 
+class _SignInScreenState extends State<SignInScreen>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -64,7 +66,7 @@ class _SignInScreenState extends State<SignInScreen>
         _emailController.text,
         _passwordController.text,
       );
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/alumni');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to sign in: ${e.toString()}')),
@@ -109,17 +111,21 @@ class _SignInScreenState extends State<SignInScreen>
                           const SizedBox(height: 16),
                           Text(
                             'Welcome Back!',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              color: Colors.blue.shade700,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  color: Colors.blue.shade700,
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Sign in to continue',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.grey.shade600,
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: Colors.grey.shade600,
+                                    ),
                           ),
                         ],
                       ),
@@ -158,14 +164,15 @@ class _SignInScreenState extends State<SignInScreen>
                           onPressed: _signIn,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue.shade700,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: const Text(
                             'Sign In',
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -185,7 +192,8 @@ class _SignInScreenState extends State<SignInScreen>
                               child: Divider(color: Colors.grey.shade400),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: Text(
                                 'OR',
                                 style: TextStyle(color: Colors.grey.shade600),
@@ -201,11 +209,13 @@ class _SignInScreenState extends State<SignInScreen>
                           onPressed: () async {
                             try {
                               await _authService.signInWithGoogle();
-                              Navigator.pushReplacementNamed(context, '/home');
+                              Navigator.pushReplacementNamed(
+                                  context, '/alumni');
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Failed to sign in with Google: ${e.toString()}'),
+                                  content: Text(
+                                      'Failed to sign in with Google: ${e.toString()}'),
                                 ),
                               );
                             }

@@ -113,17 +113,21 @@ class _SignUpScreenState extends State<SignUpScreen>
                           const SizedBox(height: 16),
                           Text(
                             'Create Account',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              color: Colors.blue.shade700,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  color: Colors.blue.shade700,
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Join the Alumni Network',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.grey.shade600,
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: Colors.grey.shade600,
+                                    ),
                           ),
                         ],
                       ),
@@ -194,14 +198,15 @@ class _SignUpScreenState extends State<SignUpScreen>
                           onPressed: _signUp,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue.shade700,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: const Text(
                             'Sign Up',
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -221,7 +226,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                               child: Divider(color: Colors.grey.shade400),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: Text(
                                 'OR',
                                 style: TextStyle(color: Colors.grey.shade600),
@@ -241,7 +247,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Failed to sign in with Google: ${e.toString()}'),
+                                  content: Text(
+                                      'Failed to sign in with Google: ${e.toString()}'),
                                 ),
                               );
                             }
