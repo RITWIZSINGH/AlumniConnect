@@ -1,5 +1,5 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print, prefer_const_constructors_in_immutables
-import 'package:alumni_connect/screens/login_screen.dart';
+import 'package:alumni_connect/screens/authScreens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget {
@@ -65,7 +65,7 @@ class CustomAppBar extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => LoginScreen(),
+            builder: (context) => SignInScreen(),
           ),
         );
       },
