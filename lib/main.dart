@@ -1,20 +1,20 @@
-// ignore_for_file: prefer_const_constructors, unused_import
-
-import 'package:alumni_connect/screens/alumni_screen.dart';
-import 'package:alumni_connect/screens/authScreens/sign_up_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:alumni_connect/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'config/firebase_config.dart';
+import 'config/route_config.dart';
+import 'config/theme_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   await Firebase.initializeApp(
-      // name: 'AlumniConnect',
-      options: FirebaseOptions(
-          apiKey: "AIzaSyD3x9nQKxoBD8xr-zWMvmsoo5TqTZxgpfk",
-          appId: "1:684205074999:web:868363c89a534ab84dedb2",
-          messagingSenderId: "684205074999",
-          projectId: "alumniconnect-810e7"));
+    options: const FirebaseOptions(
+      apiKey: FirebaseConfig.apiKey,
+      appId: FirebaseConfig.appId,
+      messagingSenderId: FirebaseConfig.messagingSenderId,
+      projectId: FirebaseConfig.projectId,
+    ),
+  );
 
   runApp(const MyApp());
 }
@@ -22,12 +22,14 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Alumni Connect',
       debugShowCheckedModeBanner: false,
-      home: AlumniScreen(),
+      theme: ThemeConfig.lightTheme,
+      initialRoute: RouteConfig.splash,
+      routes: RouteConfig.getRoutes(),
     );
   }
 }
