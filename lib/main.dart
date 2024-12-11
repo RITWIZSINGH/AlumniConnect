@@ -3,7 +3,7 @@
 import 'package:alumni_connect/screens/alumni_screen.dart';
 import 'package:alumni_connect/screens/authScreens/sign_up_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:alumni_connect/screens/splashscreen.dart';
+import 'package:alumni_connect/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
