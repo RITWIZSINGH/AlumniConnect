@@ -306,6 +306,7 @@ class _AlumniScreenState extends State<AlumniScreen> {
                         name: alumni['NAME'] ?? 'Unknown',
                         company: alumni['COMPANY'],
                         batch: alumni['BATCH'],
+                        email: alumni['EMAIL'],
                         branch: alumni['BRANCH'],
                         profilePicUrl: alumni['PIC'],
                         profileLink: alumni['PROFILE'],

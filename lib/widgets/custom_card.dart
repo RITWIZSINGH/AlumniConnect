@@ -1,8 +1,12 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors_in_immutables, prefer_const_constructors, use_super_parameters
+import 'package:alumni_connect/services/email_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'dart:ui';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../services/auth_service.dart';
 
 class AlumniCard extends StatefulWidget {
   final int index;
@@ -14,6 +18,7 @@ class AlumniCard extends StatefulWidget {
   final String? profilePicUrl;
   final String? profileLink;
   final String? field;
+  final String email; // Add email field for the alumni
   final VoidCallback onTap;
 
   const AlumniCard({
@@ -27,6 +32,7 @@ class AlumniCard extends StatefulWidget {
     this.profilePicUrl,
     this.profileLink,
     this.field,
+    required this.email, // Make email required
     required this.onTap,
   }) : super(key: key);
 
@@ -34,12 +40,15 @@ class AlumniCard extends StatefulWidget {
   State<AlumniCard> createState() => _AlumniCardState();
 }
 
-class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateMixin {
+class _AlumniCardState extends State<AlumniCard>
+    with SingleTickerProviderStateMixin {
+  final AuthService _authService = AuthService();
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<double> _slideAnimation;
   final GlobalKey _cardKey = GlobalKey();
+  bool _isSendingEmail = false;
 
   @override
   void initState() {
@@ -95,7 +104,8 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
 
   void _ensureVisible() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final RenderObject? renderObject = _cardKey.currentContext?.findRenderObject();
+      final RenderObject? renderObject =
+          _cardKey.currentContext?.findRenderObject();
       if (renderObject != null) {
         renderObject.showOnScreen(
           duration: Duration(milliseconds: 300),
@@ -136,7 +146,7 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
 
   Widget _buildFieldBadge() {
     if (widget.field == null) return SizedBox.shrink();
-    
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -171,25 +181,93 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
     }
   }
 
-  void _showReferralDialog(BuildContext context) {
+  Future<void> _sendReferralEmail(String userEmail) async {
+    setState(() {
+      _isSendingEmail = true;
+    });
+
+    try {
+      await EmailService.sendReferralRequest(
+        userEmail: userEmail,
+        alumniEmail: widget.email,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Referral request sent successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSendingEmail = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _showReferralDialog(BuildContext context) async {
+    final userEmail = await _authService.getCurrentUserEmail();
+
+    if (!mounted) return;
+
+    if (userEmail == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please login to request a referral'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     showDialog(
       context: context,
+      barrierDismissible: !_isSendingEmail,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text('Request Referral'),
-          content: Text('Would you like to request a referral from ${widget.name}?'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Would you like to request a referral from ${widget.name}?'),
+              if (_isSendingEmail) ...[
+                const SizedBox(height: 16),
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ],
+            ],
+          ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Add your referral request logic here
-              },
-              child: Text('Yes'),
+              onPressed:
+                  _isSendingEmail ? null : () => Navigator.of(context).pop(),
+              child: const Text('No'),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('No'),
+              onPressed: _isSendingEmail
+                  ? null
+                  : () async {
+                      Navigator.of(context).pop();
+                      await _sendReferralEmail(userEmail);
+                    },
+              child: const Text('Yes'),
             ),
           ],
         );
@@ -215,7 +293,8 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                         child: Container(
-                          color: Colors.black.withValues(alpha: 0.5 * _fadeAnimation.value),
+                          color: Colors.black
+                              .withValues(alpha: 0.5 * _fadeAnimation.value),
                         ),
                       ),
                     ),
@@ -255,7 +334,8 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withValues(alpha: 0.2),
+                                              color: Colors.black
+                                                  .withValues(alpha: 0.2),
                                               blurRadius: 8,
                                               offset: Offset(0, 4),
                                             ),
@@ -263,9 +343,11 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
                                         ),
                                         child: CircleAvatar(
                                           radius: 75,
-                                          backgroundImage: widget.profilePicUrl != null
-                                              ? NetworkImage(widget.profilePicUrl!)
-                                              : null,
+                                          backgroundImage:
+                                              widget.profilePicUrl != null
+                                                  ? NetworkImage(
+                                                      widget.profilePicUrl!)
+                                                  : null,
                                           child: widget.profilePicUrl == null
                                               ? Icon(Icons.person,
                                                   size: 80, color: Colors.white)
@@ -282,7 +364,8 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
                                         color: Colors.white,
                                         shadows: [
                                           Shadow(
-                                            color: Colors.black.withValues(alpha: 0.3),
+                                            color: Colors.black
+                                                .withValues(alpha: 0.3),
                                             offset: Offset(0, 2),
                                             blurRadius: 4,
                                           ),
@@ -296,7 +379,8 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
                                         widget.company!,
                                         style: TextStyle(
                                           fontSize: 20,
-                                          color: Colors.white.withValues(alpha: 0.9),
+                                          color: Colors.white
+                                              .withValues(alpha: 0.9),
                                           fontWeight: FontWeight.w500,
                                         ),
                                         textAlign: TextAlign.center,
@@ -306,15 +390,18 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
                                     Container(
                                       padding: EdgeInsets.all(16),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withValues(alpha: 0.15),
+                                        color: Colors.white
+                                            .withValues(alpha: 0.15),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Column(
                                         children: [
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              Icon(Icons.school, color: Colors.white),
+                                              Icon(Icons.school,
+                                                  color: Colors.white),
                                               SizedBox(width: 8),
                                               Text(
                                                 'Batch of ${widget.batch?.toString() ?? "N/A"}',
@@ -349,7 +436,8 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
                                     ),
                                     SizedBox(height: 24),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Expanded(
                                           child: ElevatedButton.icon(
@@ -367,10 +455,10 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
                                               ),
                                             ),
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.black.withValues(alpha: 0.3),
-                                              padding:
-                                                  EdgeInsets.symmetric(vertical: 16),
+                                              backgroundColor: Colors.black
+                                                  .withValues(alpha: 0.3),
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 16),
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(8),
@@ -382,8 +470,8 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
                                         if (widget.profileLink != null)
                                           Expanded(
                                             child: ElevatedButton.icon(
-                                              onPressed: () =>
-                                                  _launchURL(widget.profileLink),
+                                              onPressed: () => _launchURL(
+                                                  widget.profileLink),
                                               icon: Icon(
                                                 Icons.link,
                                                 color: Colors.white,
@@ -396,8 +484,8 @@ class _AlumniCardState extends State<AlumniCard> with SingleTickerProviderStateM
                                                 ),
                                               ),
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.black.withValues(alpha: 0.3),
+                                                backgroundColor: Colors.black
+                                                    .withValues(alpha: 0.3),
                                                 padding: EdgeInsets.symmetric(
                                                     vertical: 16),
                                                 shape: RoundedRectangleBorder(
